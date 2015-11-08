@@ -21,8 +21,8 @@ contract MarklePath {
         byte[32] memory left;
         byte[32] memory right;
         
-        byte RIGHT = byte(1);
-        byte LEFT = byte(0);
+        byte RIGHT = byte(0);
+        byte LEFT = byte(1);
         
         /*uint256[2] memory A;
         for (uint i=0; i<32; i++){
@@ -49,12 +49,12 @@ contract MarklePath {
                 Log_uint(50);
                 
                 
-            for (i=0; i<32; i++){
-                concat[0] += uint(left[i]) * (2**(8*(31-i)));
-            }
-            for (i=0; i<32; i++){
-                concat[1] += uint(right[i]) * (2**(8*(31-i)));
-            }
+                for (i=0; i<32; i++){
+                    concat[0] += uint(left[i]) * (2**(8*(31-i)));
+                }
+                for (i=0; i<32; i++){
+                    concat[1] += uint(right[i]) * (2**(8*(31-i)));
+                }
         
                /* for (i=0; i<64; i++){
                     if (i<32) concat[i] = left[i];
@@ -76,12 +76,12 @@ contract MarklePath {
                 }*/
                 
                 
-            for (i=0; i<32; i++){
-                concat[0] += uint(right[i]) * (2**(8*(31-i)));
-            }
-            for (i=0; i<32; i++){
-                concat[1] += uint(left[i]) * (2**(8*(31-i)));
-            }
+                for (i=0; i<32; i++){
+                    concat[0] += uint(right[i]) * (2**(8*(31-i)));
+                }
+                for (i=0; i<32; i++){
+                    concat[1] += uint(left[i]) * (2**(8*(31-i)));
+                }
         
                 
                 Log_uint(60);
@@ -154,4 +154,4 @@ contract MarklePath {
     }
     
     
-}                                                                                                                                                                                                        
+}                                                                                                                                                                                                         
