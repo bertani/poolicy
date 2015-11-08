@@ -14,30 +14,38 @@ contract MarklePath {
     
     bool public _match;
     
-    function (){
+    function checkProof(bytes proof) public returns (bool){
         //Log_uint(uint(msg.data[1]));
         //Log_uint(0);
-        uint n = uint(msg.data[0]);
+        uint n = uint(proof[0]);
         byte[32] memory left;
         byte[32] memory right;
         
         byte RIGHT = byte(1);
         byte LEFT = byte(0);
         
+        /*uint256[2] memory A;
+        for (uint i=0; i<32; i++){
+            A[0] += 48 * (2**(8*i));
+        }
+        A[1] = A[0];
+        
+        Log_bytes32(sha256(A));*/
+        
         //Log_data(msg.data);
         Log_uint(1);
         for (uint i=0; i<32; i++){
-            left[i] = msg.data[i+1];
-            right[i] = msg.data[i+1];
+            left[i] = proof[i+1];
+            right[i] = proof[i+1];
         }
         
         Log_uint(2);
         
         for (uint j=0; j<n; j++){
             Log_uint(200+j);
-            uint256[2] memory concat;
+            uint256[2] memory concat; //byte[64] memory concat;
             
-            if(msg.data[(j+1)*(32+1)] == RIGHT) {
+            if(proof[(j+1)*(32+1)] == RIGHT) {
                 Log_uint(50);
                 
                 
@@ -48,15 +56,24 @@ contract MarklePath {
                 concat[1] += uint(right[i]) * (2**(8*(31-i)));
             }
         
+               /* for (i=0; i<64; i++){
+                    if (i<32) concat[i] = left[i];
+                    else concat[i] = right[i - 32];
+                }*/
                 Log_uint(60);
                 Log_bytes64(concat);
                 
                 Log_bytes32(sha256(sha256(concat)));
                 right = bytes32_to_bytes(sha256(sha256(concat)));
                 Log_uint(70);
-                for (i=0; i<32; i++) left[i] = msg.data[(j+1)*(32+1)+i];
+                for (i=0; i<32; i++) left[i] = proof[(j+1)*(32+1)+i];
             } else {
                 Log_uint(51);
+                
+                /*for (i=0; i<64; i++){
+                    if (i<32) concat[i] = right[i];
+                    else concat[i] = left[i - 32];
+                }*/
                 
                 
             for (i=0; i<32; i++){
@@ -73,23 +90,54 @@ contract MarklePath {
                 Log_bytes32(sha256(sha256(concat)));
                 left = bytes32_to_bytes(sha256(sha256(concat)));
                 Log_uint(70);
-                for (i=0; i<32; i++) right[i] = msg.data[(j+1)*(32+1)+i];
+                for (i=0; i<32; i++) right[i] = proof[(j+1)*(32+1)+i];
             }
         }
         
         
         Log_bytes32_(left);
         for (i=0; i<32; i++){
-            if (left[i] != msg.data[n*(32+1)+i]){
-                //_match = false;
+            if (left[i] != proof[n*(32+1)+i]){
+                _match = false;
                 Log_uint(1000+i);
-                return;
+                return false;
             }
         }
         
         _match = true;
-        
         Log_uint(100);
+        return true;
     }
     
-}                                                                                                                                                                                        
+    mapping (address => uint) balances;
+    
+    
+    function(){
+        if (msg.value > 0) msg.sender.send(msg.value);
+    }
+    
+    function withdrawCollateral(uint _amount) public {
+        if (_amount > balances[msg.sender]) throw;
+        msg.sender.send(_amount);
+        balances[msg.sender] -= _amount;
+    }
+    
+    function depositCollateral() public returns (bool){
+        if (msg.value == 0) throw;
+        balances[msg.sender] += msg.value;
+    }
+    
+    uint _lowerTxN;
+    function redeemBounty(address _poolAddr, bytes _proof) public {
+        if (!checkProof(_proof)) return; //throw;
+        //TODO: check poolAddr sig matches getSig(_proof)
+        uint n = uint(_proof[0]);
+        uint lowerTxN = 1+2**(n-1);
+        _lowerTxN = lowerTxN;
+        //if (lowerTxN > 64) throw;
+        msg.sender.send(balances[_poolAddr]);
+        balances[_poolAddr] = 0;
+    }
+    
+    
+}                                                                                                                                                                                                      
