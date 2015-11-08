@@ -21,8 +21,8 @@ contract MarklePath {
         byte[32] memory left;
         byte[32] memory right;
         
-        byte RIGHT = byte(0);
-        byte LEFT = byte(1);
+        byte RIGHT = byte(1);
+        byte LEFT = byte(0);
         
         /*uint256[2] memory A;
         for (uint i=0; i<32; i++){
@@ -154,4 +154,4 @@ contract MarklePath {
     }
     
     
-}                                                                                                                                                                                                         
+}                                                                                                                                                                                                          
