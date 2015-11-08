@@ -97,7 +97,7 @@ contract MarklePath {
         
         Log_bytes32_(left);
         for (i=0; i<32; i++){
-            if (left[i] != proof[n*(32+1)+i]){
+            if (left[i] != proof[1+n*(32+1)+i]){
                 _match = false;
                 Log_uint(1000+i);
                 return false;
@@ -141,6 +141,7 @@ contract MarklePath {
         Log_uint(2101);
         //TODO: check poolAddr sig matches getSig(_proof)
         uint n = uint(_proof[0]);
+        if (n == 0) return; //throw;
         uint lowerTxN = 1+2**(n-1);
         _lowerTxN = lowerTxN;
         //if (lowerTxN > 64) throw;
@@ -153,4 +154,4 @@ contract MarklePath {
     }
     
     
-}                                                                                                                                                                                                       
+}                                                                                                                                                                                                        
