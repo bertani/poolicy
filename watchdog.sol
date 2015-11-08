@@ -113,31 +113,44 @@ contract MarklePath {
     
     
     function(){
+        Log_uint(2000);
         if (msg.value > 0) msg.sender.send(msg.value);
     }
     
     function withdrawCollateral(uint _amount) public {
+        
+        Log_uint(2002);
         if (_amount > balances[msg.sender]) throw;
         msg.sender.send(_amount);
         balances[msg.sender] -= _amount;
     }
     
     function depositCollateral() public returns (bool){
+        
+        Log_uint(2001);
         if (msg.value == 0) throw;
         balances[msg.sender] += msg.value;
     }
     
     uint _lowerTxN;
     function redeemBounty(address _poolAddr, bytes _proof) public {
+        
+        Log_uint(2100);
         if (!checkProof(_proof)) return; //throw;
+        
+        Log_uint(2101);
         //TODO: check poolAddr sig matches getSig(_proof)
         uint n = uint(_proof[0]);
         uint lowerTxN = 1+2**(n-1);
         _lowerTxN = lowerTxN;
         //if (lowerTxN > 64) throw;
+        
+        Log_uint(2102);
         msg.sender.send(balances[_poolAddr]);
         balances[_poolAddr] = 0;
+        
+        Log_uint(2103);
     }
     
     
-}                                                                                                                                                                                                      
+}                                                                                                                                                                                                       
